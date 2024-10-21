@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://gino1216.github.io/NEW2/b1-buooir10.html -->
+<html lang="vi"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script>
+        document.addEventListener('keydown', function(event) {
+            // Chặn phím F12
+            if (event.key === 'F12') {
+                event.preventDefault();
+            }
+            // Chặn Ctrl + S
+            if (event.ctrlKey && event.key === 's') {
+                event.preventDefault();
+                alert("Tính năng lưu trang đã bị vô hiệu hóa!");
+            }
+        });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thông tin hiệu quả</title>
+    <link rel="stylesheet" href="./Quản lý thông tin hiệu quả_files/b1 buổi 10.css">
+</head>
+<style>
+    /* CSS cho giao diện quản lý thông tin */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8; /* Màu nền nhẹ nhàng */
+    color: #333; /* Màu chữ tối */
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #007bff; /* Màu xanh dương cho tiêu đề */
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.task-manager {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+    border-radius: 10px; /* Bo tròn góc */
+}
+
+.input-section input {
+    width: calc(50% - 10px); /* Đặt kích thước input */
+    margin: 10px 5px;
+    padding: 10px;
+    border-radius: 5px; /* Bo tròn góc input */
+    border: 1px solid #ccc;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+}
+
+.input-section input:focus {
+    border-color: #007bff; /* Đổi màu viền khi focus */
+    outline: none;
+}
+
+.controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.controls button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.controls button:hover {
+    background-color: #0056b3; /* Hiệu ứng khi hover */
+}
+
+.controls select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.list-container {
+    margin-top: 20px;
+}
+
+#person-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#person-list li {
+    background-color: #e9ecef;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#person-list li:hover {
+    background-color: #dfe6f2; /* Hiệu ứng hover trên các dòng */
+}
+
+#status-message {
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
+    color: #28a745; /* Màu xanh cho tin nhắn trạng thái */
+}
+
+</style>
+<body>
+    <h1>Quản lý hồ sơ cá nhân</h1>
+    <div class="task-manager">
+        <div class="input-section">
+            <input type="text" id="id-input" placeholder="Mã ID">
+            <input type="text" id="name-input" placeholder="Họ và tên">
+            <input type="date" id="dob-input" placeholder="Ngày tháng năm sinh">
+            <input type="text" id="task-input" placeholder="Nhiệm vụ">
+            <input type="text" id="contact-input" placeholder="Số liên hệ">
+        </div>
+        <div class="controls">
+            <button onclick="addPerson()">Thêm mới</button>
+            <button onclick="pinTask()">Đánh dấu công việc</button>
+            <button onclick="cancelPinTask()">Bỏ đánh dấu</button>
+            <button onclick="removePerson()">Xóa dòng chọn</button>
+            <select id="sort-options" onchange="sortList()">
+                <option value="id">Sắp xếp theo Mã ID</option>
+                <option value="name">Sắp xếp theo Họ tên</option>
+            </select>
+        </div>
+        <div class="list-container">
+            <ul id="person-list"></ul>
+        </div>
+        <p id="status-message"></p>
+    </div>
+    <script>// Thêm một người vào danh sách
+        function addPerson() {
+            var id = document.getElementById("id-input").value;
+            var name = document.getElementById("name-input").value;
+            var dob = document.getElementById("dob-input").value;
+            var task = document.getElementById("task-input").value;
+            var contact = document.getElementById("contact-input").value;
+        
+            // Kiểm tra xem thông tin đã nhập đầy đủ chưa
+            if (id === "" || name === "" || dob === "" || task === "" || contact === "") {
+                document.getElementById("status-message").innerText = "Vui lòng nhập đủ thông tin!";
+                return;
+            }
+        
+            // Tạo phần tử li để hiển thị thông tin
+            var list = document.getElementById("person-list");
+            var listItem = document.createElement("li");
+            listItem.innerText = `ID: ${id}, Họ tên: ${name}, Nhiệm vụ: ${task}, Số liên hệ: ${contact}`;
+        
+            list.appendChild(listItem);
+        
+            // Xóa thông tin sau khi thêm
+            document.getElementById("id-input").value = "";
+            document.getElementById("name-input").value = "";
+            document.getElementById("dob-input").value = "";
+            document.getElementById("task-input").value = "";
+            document.getElementById("contact-input").value = "";
+            document.getElementById("status-message").innerText = "Đã thêm thành công!";
+        }
+        
+        // Đánh dấu nhiệm vụ (giả sử người dùng sẽ chọn một mục từ danh sách)
+        function pinTask() {
+            var list = document.getElementById("person-list");
+            var selectedItem = list.querySelector(".selected");
+        
+            if (selectedItem) {
+                selectedItem.style.backgroundColor = "yellow";
+                document.getElementById("status-message").innerText = "Đã đánh dấu nhiệm vụ.";
+            } else {
+                document.getElementById("status-message").innerText = "Chưa chọn mục nào để đánh dấu!";
+            }
+        }
+        
+        // Bỏ đánh dấu nhiệm vụ
+        function cancelPinTask() {
+            var list = document.getElementById("person-list");
+            var selectedItem = list.querySelector(".selected");
+        
+            if (selectedItem) {
+                selectedItem.style.backgroundColor = "transparent";
+                document.getElementById("status-message").innerText = "Đã bỏ đánh dấu.";
+            } else {
+                document.getElementById("status-message").innerText = "Chưa chọn mục nào để bỏ đánh dấu!";
+            }
+        }
+        
+        // Xóa người được chọn khỏi danh sách
+        function removePerson() {
+            var list = document.getElementById("person-list");
+            var selectedItem = list.querySelector(".selected");
+        
+            if (selectedItem) {
+                list.removeChild(selectedItem);
+                document.getElementById("status-message").innerText = "Đã xóa thành công!";
+            } else {
+                document.getElementById("status-message").innerText = "Chưa chọn mục nào để xóa!";
+            }
+        }
+        
+        // Thêm sự kiện click để chọn người từ danh sách
+        document.getElementById("person-list").addEventListener("click", function(event) {
+            var items = document.querySelectorAll("#person-list li");
+            items.forEach(item => item.classList.remove("selected"));
+            event.target.classList.add("selected");
+        });
+        </script>
+
+
+</body></html>
